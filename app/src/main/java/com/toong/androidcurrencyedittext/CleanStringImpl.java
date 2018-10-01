@@ -1,6 +1,7 @@
 package com.toong.androidcurrencyedittext;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -40,6 +41,19 @@ class CleanStringImpl implements CleanString {
     @Override
     public boolean update(int selectionStart, int selectionEnd, String string, String changeText) {
 
+        d(changeText);
+
+        StringBuilder s = new StringBuilder(string);
+
+        for (char c : changeText.toCharArray()) {
+            if (Objects.equals(c , decimalSeparator)) {
+                s.insert(selectionStart, decimalSeparator);
+                break;
+            }
+        }
+
+        string = s.toString();
+
         if (string.length() < prefix.length() + suffix.length()) {
             displayText = prefix + suffix;
             selection = prefix.length();
@@ -52,19 +66,13 @@ class CleanStringImpl implements CleanString {
 
         int digitCountUntilSelection = digitCount(string, selectionEnd);
 
-        d(format("Unstripped {0}", string));
         String stripped = stripString(string);
-        d(format("Stripped   {0}", stripped));
 
-        if (Objects.equals(stripped, previousStripped) || stripped.isEmpty()) {
-            return false;
-        }
+
         previousStripped = stripped;
 
         double aDouble = Double.parseDouble(stripped);
-        d(format("double={0}", aDouble));
         displayText = numberFormat.format(aDouble);
-        d(format("display={0}", displayText));
         selection = digitsForward(digitCountUntilSelection, displayText);
 
         return true;

@@ -90,7 +90,7 @@ public class CurrencyEditText extends android.support.v7.widget.AppCompatEditTex
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             d(MessageFormat.format("BEFORECHANGED [{0}] s{1} c{2} a{3}", s, start, count, after));
-            changeText = s.toString().substring(start, count);
+            changeText = s.toString().substring(start, start+count);
         }
 
         @Override
