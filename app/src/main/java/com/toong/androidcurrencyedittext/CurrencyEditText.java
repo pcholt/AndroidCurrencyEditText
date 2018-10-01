@@ -12,8 +12,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.Locale;
+
+import static timber.log.Timber.d;
 
 /**
  * Created by PhanVanLinh on 25/07/2017.
@@ -77,6 +80,7 @@ public class CurrencyEditText extends android.support.v7.widget.AppCompatEditTex
     private static class CurrencyTextWatcher implements TextWatcher {
         private final EditText editText;
         CleanString cleanString ;
+        private String changeText;
 
         CurrencyTextWatcher(EditText editText, Locale locale) {
             this.editText = editText;
@@ -85,18 +89,20 @@ public class CurrencyEditText extends android.support.v7.widget.AppCompatEditTex
 
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            // do nothing
+            d(MessageFormat.format("BEFORECHANGED [{0}] s{1} c{2} a{3}", s, start, count, after));
+            changeText = s.toString().substring(start, count);
         }
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            // do nothing
+            d(MessageFormat.format("ONCHANGED     [{0}]  s{1} c{2}", s, start, count));
         }
 
         @Override
         public void afterTextChanged(Editable editable) {
+            d(MessageFormat.format("AFTERCHANGED  [{0}]", editable));
 
-            if (cleanString.update(editText.getSelectionStart(), editText.getSelectionEnd(), editable.toString())) {
+            if (cleanString.update(editText.getSelectionStart(), editText.getSelectionEnd(), editable.toString(), changeText)) {
                 editText.removeTextChangedListener(this);
                 editText.setText(cleanString.getDisplayText());
                 editText.setSelection(cleanString.getSelection());

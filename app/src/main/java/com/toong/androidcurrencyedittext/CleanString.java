@@ -1,9 +1,7 @@
 package com.toong.androidcurrencyedittext;
 
 interface CleanString {
-    public boolean update(int selectionStart, int selectionEnd, String string);
-
+    boolean update(int selectionStart, int selectionEnd, String string, String changeText);
     String getDisplayText();
-
     int getSelection();
 }
