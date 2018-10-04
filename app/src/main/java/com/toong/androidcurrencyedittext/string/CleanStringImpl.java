@@ -53,6 +53,11 @@ public class CleanStringImpl implements CleanString {
             return false;
         }
 
+        if (changeText.length() > 0 && changeText.charAt(0) == decimalSeparator) {
+            // Trying to delete the decimal separator - return the decimal separator to the string.
+            string = new StringBuffer(string).insert(selectionEnd, decimalSeparator).toString();
+        }
+
         digitCountUntilSelection = cursorBehaviour.digitCount(string, selectionEnd);
         d("digitCountUntilSelection=%d (%s, %d)", digitCountUntilSelection, string, selectionEnd);
 
