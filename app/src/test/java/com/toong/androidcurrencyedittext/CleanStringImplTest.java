@@ -1,12 +1,15 @@
 package com.toong.androidcurrencyedittext;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.squareup.burst.BurstJUnit4;
+import com.toong.androidcurrencyedittext.behaviour.CursorBehaviourImpl;
+import com.toong.androidcurrencyedittext.string.CleanString;
+import com.toong.androidcurrencyedittext.string.CleanStringImpl;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -36,36 +39,50 @@ public class CleanStringImplTest {
 
     @Test
     public void update_VALUES_EQUAL(TestCase testCase) {
-        CleanString cleanString = new CleanStringImpl(Locale.forLanguageTag(testCase.languageTag));
+        CleanString cleanString = getCleanString(testCase);
         cleanString.update(testCase.selectionStart, testCase.selectionEnd, testCase.inputText, testCase.changeText);
         assertEquals(testCase.outputText, cleanString.getDisplayText());
     }
 
+    @NonNull
+    private CleanStringImpl getCleanString(TestCase testCase) {
+        return new CleanStringImpl(Locale.forLanguageTag(testCase.languageTag), new CursorBehaviourImpl());
+    }
+
     @Test
     public void update_CARET_POS(TestCase testCase) {
-        CleanString cleanString = new CleanStringImpl(Locale.forLanguageTag(testCase.languageTag));
+        CleanString cleanString = getCleanString(testCase);
         cleanString.update(testCase.selectionStart, testCase.selectionEnd, testCase.inputText, testCase.changeText);
         assertEquals(testCase.specifiedOutput, TestCase.displayWithCursorPosition(cleanString.getDisplayText(), cleanString.getSelection()));
     }
 
     @Test
+    public void update_INITIAL_DIGITS(TestCase testCase) {
+        CleanString cleanString = getCleanString(testCase);
+        if (cleanString.getDigitCountUntilSelection() >= 0) {
+            cleanString.update(testCase.selectionStart, testCase.selectionEnd, testCase.inputText, testCase.changeText);
+            assertEquals(testCase.expectedInitialDigitCount, cleanString.getDigitCountUntilSelection());
+        }
+    }
+
+    @Test
     @Ignore("Not needed, POSITION1 does an admirable job")
-    public void update_POSITION2(TestCase testCase)
-    {
-        CleanString cleanString = new CleanStringImpl(Locale.forLanguageTag(testCase.languageTag));
+    public void update_POSITION2(TestCase testCase) {
+        CleanString cleanString = getCleanString(testCase);
         cleanString.update(testCase.selectionStart, testCase.selectionEnd, testCase.inputText, testCase.changeText);
         assertEquals(testCase.newSelectionPosition, cleanString.getSelection());
     }
 
     enum TestCase {
-//        CASE1a("fr-FR", "1,^ €", "1,^00 €"),
+        //        CASE1a("fr-FR", "1,^ €", "1,^00 €"),
 //        CASE1b("en-IE", "€1^", "€1^.00"),
 //        CASE1c("en-IE", "€1.^.00", "€1.^00"),
 //        CASE1d("en-IE", "€1.0^00", "€1.0^0"),
 //        CASE2a("en-GB", "12,921.13^", "£12,921.13^"),
 //        CASE3A("en-US", "$^.00", "$0^.00"),
 //        CASE3B("en-US", "$0.^.00", "$0.^00"),
-        CASE3C("en-US", "$^.00", "$0^.00"),
+        CASE3C1("en-US", "$^.00", "$0^.00", 0),
+        CASE3C2("en-US", "$01^.00", "$1^.00", 1),
 //        CASE3D("en-US", "^$.00", "$0^.00"),
 //        CASE3E("en-US", "$2^00", "$2^.00", "."),
 //        CASE3F("fr-FR", "1^00 €", "1^,00 €", ","),
@@ -82,6 +99,7 @@ public class CleanStringImplTest {
 
         final int selectionStart;
         final int selectionEnd;
+        private int expectedInitialDigitCount = -1;
         public String specifiedOutput;
         public String specifiedInput;
         private String languageTag;
@@ -107,13 +125,18 @@ public class CleanStringImplTest {
             changeText = "";
         }
 
+        TestCase(String languageTag, String inputText, String outputText, int expectedInitialDigitCount) {
+            this(languageTag, inputText, outputText);
+            this.expectedInitialDigitCount = expectedInitialDigitCount;
+        }
+
         @Override
         public String toString() {
-            return specifiedInput+" -> "+specifiedOutput+ ((Objects.equals(changeText, "")) ? "":", changeText=["+changeText+"]");
+            return specifiedInput + " -> " + specifiedOutput + ((Objects.equals(changeText, "")) ? "" : ", changeText=[" + changeText + "]");
         }
 
         public static String displayWithCursorPosition(String displayText, int selection) {
-            return displayText.substring(0,selection) + "^" + displayText.substring(selection);
+            return displayText.substring(0, selection) + "^" + displayText.substring(selection);
         }
     }
 }

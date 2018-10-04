@@ -1,7 +1,8 @@
-package com.toong.androidcurrencyedittext;
+package com.toong.androidcurrencyedittext.string;
 
-interface CleanString {
+public interface CleanString {
     boolean update(int selectionStart, int selectionEnd, String string, String changeText);
     String getDisplayText();
     int getSelection();
+    int getDigitCountUntilSelection();
 }

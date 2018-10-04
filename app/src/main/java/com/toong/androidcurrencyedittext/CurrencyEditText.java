@@ -8,12 +8,12 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.widget.EditText;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
+
+import com.toong.androidcurrencyedittext.behaviour.CursorBehaviourImpl;
+import com.toong.androidcurrencyedittext.string.CleanString;
+import com.toong.androidcurrencyedittext.string.CleanStringImpl;
+
 import java.text.MessageFormat;
-import java.text.NumberFormat;
 import java.util.Locale;
 
 import static timber.log.Timber.d;
@@ -84,7 +84,7 @@ public class CurrencyEditText extends android.support.v7.widget.AppCompatEditTex
 
         CurrencyTextWatcher(EditText editText, Locale locale) {
             this.editText = editText;
-            cleanString = new CleanStringImpl(locale);
+            cleanString = new CleanStringImpl(locale, new CursorBehaviourImpl());
         }
 
         @Override
