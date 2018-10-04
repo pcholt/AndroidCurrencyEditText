@@ -96,6 +96,8 @@ public class CleanStringImplTest{
         CASE4e("vi-VN", "122.345.3^678 đ", "1.223.453.^678 đ"),
         case5a("be-BY", "Руб0^", "Руб0^"),
         case5b("en-ZA", "^R 0.00", "R 0^.00"),
+        case_newdecimal("en-US", "$3.^.00", "$3.^00"),
+        case_delete_spacer("en-US", "$1^200.00", "$^200.00", ",")
         ;
 
         final int selectionStart;

@@ -5,7 +5,9 @@ import android.graphics.Rect;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.Spanned;
 import android.text.TextWatcher;
+import android.text.method.DigitsKeyListener;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
@@ -15,6 +17,7 @@ import com.toong.androidcurrencyedittext.string.CleanStringImpl;
 
 import java.text.MessageFormat;
 import java.util.Locale;
+import java.util.Objects;
 
 import static timber.log.Timber.d;
 
@@ -42,6 +45,16 @@ public class CurrencyEditText extends android.support.v7.widget.AppCompatEditTex
         super(context, attrs, defStyleAttr);
         this.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         this.setFilters(new InputFilter[]{new InputFilter.LengthFilter(MAX_LENGTH)});
+        this.setKeyListener(new DigitsKeyListener(getTextLocale()) {
+            @Override
+            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                CharSequence result = super.filter(source, start, end, dest, dstart, dend);
+                if (Objects.equals(source.toString(), ".")) {
+                    return source;
+                }
+                return result;
+            }
+        });
         java.text.NumberFormat format = java.text.NumberFormat.getCurrencyInstance(getTextLocale());
         prefix = format.getCurrency().getSymbol();
         setHint(prefix);

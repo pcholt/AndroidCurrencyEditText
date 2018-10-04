@@ -53,10 +53,16 @@ public class CleanStringImpl implements CleanString {
             return false;
         }
 
-        if (changeText.length() > 0 && changeText.charAt(0) == decimalSeparator) {
-            // Trying to delete the decimal separator - return the decimal separator to the string.
-            string = new StringBuffer(string).insert(selectionEnd, decimalSeparator).toString();
-        }
+        if (changeText.length() > 0)
+            if (changeText.charAt(0) == decimalSeparator) {
+                // Trying to delete the decimal separator - return the decimal separator to the string.
+                string = new StringBuffer(string).insert(selectionEnd, decimalSeparator).toString();
+            }
+            else if (changeText.charAt(0) == groupingSeparator) {
+            // Trying to delete the grouping separator - delete the next character to the left.
+                selectionEnd--;
+                string = new StringBuffer(string).deleteCharAt(selectionEnd).toString();
+            }
 
         digitCountUntilSelection = cursorBehaviour.digitCount(string, selectionEnd);
         d("digitCountUntilSelection=%d (%s, %d)", digitCountUntilSelection, string, selectionEnd);
@@ -71,8 +77,8 @@ public class CleanStringImpl implements CleanString {
         }
 
         displayText = numberFormat.format(aDouble);
-        d("digitCountUntilSelection:%d",digitCountUntilSelection);
-        d("displayText:%s",displayText);
+        d("digitCountUntilSelection:%d", digitCountUntilSelection);
+        d("displayText:%s", displayText);
         selection = cursorBehaviour.cursorPositionAfterCount(digitCountUntilSelection, displayText);
 
         return true;
