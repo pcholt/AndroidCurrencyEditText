@@ -1,12 +1,13 @@
 package com.toong.androidcurrencyedittext.behaviour;
 
 import static timber.log.Timber.d;
+import static timber.log.Timber.v;
 
 public class CursorBehaviourImpl implements CursorBehaviour {
 
-    public static final int STATE_SKIP_INITIAL_ZERO = 1;
-    public static final int STATE_COUNT_DIGITS = 2;
-    public static final int STATE_EXIT = 3;
+    private static final int STATE_SKIP_INITIAL_ZERO = 1;
+    private static final int STATE_COUNT_DIGITS = 2;
+    private static final int STATE_EXIT = 3;
     private char decimalSeparator;
 
     @Override
@@ -14,7 +15,7 @@ public class CursorBehaviourImpl implements CursorBehaviour {
         int i = 0;
         int count = 0;
         int state = STATE_SKIP_INITIAL_ZERO;
-        while (i < selectionEnd && state != STATE_EXIT) {
+        while (i < selectionEnd) {
             char c = string.charAt(i);
             switch (state) {
                 case STATE_SKIP_INITIAL_ZERO:
@@ -32,7 +33,7 @@ public class CursorBehaviourImpl implements CursorBehaviour {
             }
             i++;
         }
-        d("%s", count);
+        v("digitCount=%s", count);
         return count;
     }
 
@@ -41,17 +42,24 @@ public class CursorBehaviourImpl implements CursorBehaviour {
         d("cursorPositionAfterCount(%d, %s)", count, string);
         int pos = 0;
 
+        String regex0 = "[1-9" + decimalSeparator + "]";
+        String regex1 = "[0-9" + decimalSeparator + "]";
+        String regex = regex0;
         for (int i = 0; i < string.length(); i++) {
             pos = i;
             char c = string.charAt(i);
-            if (String.valueOf(c).matches("[1-9" + decimalSeparator + "]")) {
+            d("regexes=%s | %s", regex0, regex1);
+            if (String.valueOf(c).matches(regex)) {
+                d("%c matches => decrement", c);
                 count--;
+                regex = regex1;
             }
-            if (count <= 0) {
+            if (count < 0) {
+                d("%c match fail => return %s", c, pos);
                 return pos;
             }
         }
-        return pos;
+        return string.length();
     }
 
     @Override

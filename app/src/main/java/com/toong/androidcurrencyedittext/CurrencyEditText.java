@@ -21,13 +21,12 @@ import static timber.log.Timber.d;
 /**
  * Created by PhanVanLinh on 25/07/2017.
  * phanvanlinh.94vn@gmail.com
- *
+ * <p>
  * Some note <br/>
  * <li>Always use locale US instead of default to make DecimalFormat work well in all language</li>
  */
 public class CurrencyEditText extends android.support.v7.widget.AppCompatEditText {
     private static final int MAX_LENGTH = 20;
-    private static final int MAX_DECIMAL = 3;
     private CurrencyTextWatcher currencyTextWatcher;
     private String prefix;
 
@@ -42,7 +41,7 @@ public class CurrencyEditText extends android.support.v7.widget.AppCompatEditTex
     public CurrencyEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
-        this.setFilters(new InputFilter[] { new InputFilter.LengthFilter(MAX_LENGTH) });
+        this.setFilters(new InputFilter[]{new InputFilter.LengthFilter(MAX_LENGTH)});
         java.text.NumberFormat format = java.text.NumberFormat.getCurrencyInstance(getTextLocale());
         prefix = format.getCurrency().getSymbol();
         setHint(prefix);
@@ -79,7 +78,7 @@ public class CurrencyEditText extends android.support.v7.widget.AppCompatEditTex
 
     private static class CurrencyTextWatcher implements TextWatcher {
         private final EditText editText;
-        CleanString cleanString ;
+        CleanString cleanString;
         private String changeText;
 
         CurrencyTextWatcher(EditText editText, Locale locale) {
@@ -90,7 +89,7 @@ public class CurrencyEditText extends android.support.v7.widget.AppCompatEditTex
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             d(MessageFormat.format("BEFORECHANGED [{0}] s{1} c{2} a{3}", s, start, count, after));
-            changeText = s.toString().substring(start, start+count);
+            changeText = s.toString().substring(start, start + count);
         }
 
         @Override

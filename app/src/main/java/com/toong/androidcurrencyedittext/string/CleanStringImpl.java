@@ -66,6 +66,8 @@ public class CleanStringImpl implements CleanString {
         }
 
         displayText = numberFormat.format(aDouble);
+        d("digitCountUntilSelection:%d",digitCountUntilSelection);
+        d("displayText:%s",displayText);
         selection = cursorBehaviour.cursorPositionAfterCount(digitCountUntilSelection, displayText);
 
         return true;
