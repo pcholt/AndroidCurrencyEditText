@@ -21,6 +21,7 @@ import java.util.Objects;
 
 import static timber.log.Timber.d;
 
+
 /**
  * Created by PhanVanLinh on 25/07/2017.
  * phanvanlinh.94vn@gmail.com
@@ -28,7 +29,7 @@ import static timber.log.Timber.d;
  * Some note <br/>
  * <li>Always use locale US instead of default to make DecimalFormat work well in all language</li>
  */
-public class CurrencyEditText extends android.support.v7.widget.AppCompatEditText {
+public class CurrencyEditText extends androidx.appcompat.widget.AppCompatEditText {
     private static final int MAX_LENGTH = 20;
     private CurrencyTextWatcher currencyTextWatcher;
     private String prefix;
@@ -38,11 +39,12 @@ public class CurrencyEditText extends android.support.v7.widget.AppCompatEditTex
     }
 
     public CurrencyEditText(Context context, AttributeSet attrs) {
-        this(context, attrs, android.support.v7.appcompat.R.attr.editTextStyle);
+        this(context, attrs, androidx.appcompat.R.attr.editTextStyle);
     }
 
     public CurrencyEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        setTextLocale(Locale.GERMAN);
         this.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL);
         this.setFilters(new InputFilter[]{new InputFilter.LengthFilter(MAX_LENGTH)});
         this.setKeyListener(new DigitsKeyListener(getTextLocale()) {

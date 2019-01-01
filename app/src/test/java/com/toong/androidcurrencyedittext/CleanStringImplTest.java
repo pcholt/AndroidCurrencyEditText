@@ -1,6 +1,6 @@
 package com.toong.androidcurrencyedittext;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.squareup.burst.BurstJUnit4;
@@ -15,15 +15,16 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Locale;
 import java.util.Objects;
 
 import timber.log.Timber;
 
+import static com.toong.androidcurrencyedittext.CleanStringImplTest.TestCase.*;
+import static java.util.Locale.*;
 import static org.junit.Assert.*;
 
 @RunWith(BurstJUnit4.class)
-public class CleanStringImplTest{
+public class CleanStringImplTest {
 
     @BeforeClass
     public static void setupLogging() {
@@ -46,14 +47,14 @@ public class CleanStringImplTest{
 
     @NonNull
     private CleanStringImpl getCleanString(TestCase testCase) {
-        return new CleanStringImpl(Locale.forLanguageTag(testCase.languageTag), new CursorBehaviourImpl());
+        return new CleanStringImpl(forLanguageTag(testCase.languageTag), new CursorBehaviourImpl());
     }
 
     @Test
     public void update_CARET_POS(TestCase testCase) {
         CleanString cleanString = getCleanString(testCase);
         cleanString.update(testCase.selectionStart, testCase.selectionEnd, testCase.inputText, testCase.changeText);
-        assertEquals(testCase.specifiedOutput, TestCase.displayWithCursorPosition(cleanString.getDisplayText(), cleanString.getSelection()));
+        assertEquals(testCase.specifiedOutput, displayWithCursorPosition(cleanString.getDisplayText(), cleanString.getSelection()));
     }
 
     @Test
@@ -73,8 +74,10 @@ public class CleanStringImplTest{
         assertEquals(testCase.newSelectionPosition, cleanString.getSelection());
     }
 
+    @SuppressWarnings("unused")
     enum TestCase {
-                CASE1a("fr-FR", "1,^ €", "1,^00 €"),
+
+        CASE1a("fr-FR", "1,^ €", "1,^00 €"),
         CASE1b("en-IE", "€1^", "€1^.00"),
         CASE1c("en-IE", "€1.^.00", "€1.^00"),
         CASE1d("en-IE", "€1.0^00", "€1.0^0"),
@@ -96,9 +99,8 @@ public class CleanStringImplTest{
         CASE4e("vi-VN", "122.345.3^678 đ", "1.223.453.^678 đ"),
         case5a("be-BY", "Руб0^", "Руб0^"),
         case5b("en-ZA", "^R 0.00", "R 0^.00"),
-        case_newdecimal("en-US", "$3.^.00", "$3.^00"),
-        case_delete_spacer("en-US", "$1^200.00", "$^200.00", ",")
-        ;
+        case_newDecimal("en-US", "$3.^.00", "$3.^00"),
+        case_deleteSpacer("en-US", "$1^200.00", "$^200.00", ",");
 
         final int selectionStart;
         final int selectionEnd;
@@ -135,7 +137,7 @@ public class CleanStringImplTest{
 
         @Override
         public String toString() {
-            return this.name()+": "+specifiedInput + " -> " + specifiedOutput + ((Objects.equals(changeText, "")) ? "" : ", changeText=[" + changeText + "]");
+            return this.name() + ": " + specifiedInput + " -> " + specifiedOutput + ((Objects.equals(changeText, "")) ? "" : ", changeText=[" + changeText + "]");
         }
 
         public static String displayWithCursorPosition(String displayText, int selection) {
